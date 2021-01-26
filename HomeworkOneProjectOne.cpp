@@ -34,7 +34,7 @@ int main() {
   }
 
   //Print the vector and remove elements until the vector is empty
-  while ((!elements.size() == 1) || (!elements.empty()){
+  while ((!elements.size() == 1) || (!elements.empty())){
     cout << elements.back() << ", " ;
     elements.pop_back() ;
   }
