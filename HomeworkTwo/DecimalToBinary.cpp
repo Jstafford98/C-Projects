@@ -39,27 +39,23 @@ int main() {
   int decimalInput ;
 
   while (true){
-
     cout << "Enter a number to convert to a Binary Number (Enter -1 to exit): ", cin >> decimalInput ;//Prompt user for a decimal number
-
     if (decimalInput == -1)//Check for sentinel
       break ;
-
     cout << decimalInput << " in binary is " << decimalToBinary(decimalInput) << "." << endl ;//Convert to binary and display to user
   }
 }
 string decimalToBinary(int n){
   
   int decimal_number = n ;
-
   string binary = "" ;//Will be used to store our return string
 
   if (decimal_number == 0)//0 in  binary is simply 0
     return "0" ;
-
   while (decimal_number){
     decimal_number % 2 ? binary.insert(0,1,'1') : binary.insert(0,1,'0') ;//Insert appropriate binary digit at front of string 
     decimal_number /=2 ;//Divide decimal number by 2 for next iteration
   }
+  
   return binary ;
 }
