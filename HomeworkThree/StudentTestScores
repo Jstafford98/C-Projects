@@ -1,0 +1,147 @@
+/**
+* StudentTestScores.cpp - The purpose of this program is to find the average of test scores
+* Author: Jordan Stafford
+* Module: 3
+* Project: Homework 3 Project 1
+* Problem Statement: This program finds the average of a set of user provided test scores represented by student objects
+* Algorithim: 1) This program runs in an infinite loop inside of the main method. 
+              2) First, the user is prompted to enter a test score.
+              3) Then, a multi way if statement is used to determine the following actions. If the provided value is greater than 100 or less than 0, then an error is displayed 
+                 and the loop continues. 
+              4) Otherwise, we then create a new array that is one size larger to give us dynamic allocation. If our array pointer, scores, is a nullptr, then a new array with a size of 1 is made.
+                 If the pointer is not null, arrCopy is called to return a new array that is one larger. See arrCopy function for documentation.
+              5) Once a new array has been made, we add the user provided value to the array at it's respective index, increment the total number of test scores, and then add the score of the test      to our accumulative grade value.
+              6) After this, we check to see if the total expected grades has been reached. If so, the loop breaks. Otherwise, it continues.
+              7) Once the loop is broken, we sort the array using the ascensionSort() function and then display it using printReport(). See functions for documentation
+              8) Finally, we delete the memory used by the scores pointer and set it to null to prevent memory leaks. After this, the program exits.   
+*/
+
+#include <iostream>
+#include <iomanip> 
+#include <string>
+
+using namespace std ;
+
+//Prototypes
+int getAverageTestScores() ;
+void printReport() ;
+void ascencionSort() ;
+
+//Classes
+class Student{
+  public:
+  //Data Members
+  string mName ;
+  int mScore ;
+
+  //Constructor-Destructor
+  Student(string name = "Empty",int score = 0){
+    mName = name ;
+    mScore = score ;
+  }
+  Student(Student &copy){
+    mName = copy.getName() ;
+    mScore = copy.getScore() ;
+  }
+  ~Student(){}
+
+  //Getters
+  string getName(){ return mName ; }
+  int getScore(){ return mScore ; }
+
+  //Setters
+  void setName(string name){ mName = name ;}
+  void setScore(int score){ mScore = score ;}
+
+  //Other
+  string to_string(){
+    return "Student[Name: " + mName + ", Score: " + std::to_string(mScore) + "]" ;
+  }
+
+} ;
+
+//Global Variables
+Student *student_scores = nullptr ;
+int total_tests = 0, total_score, longest_name_length ;// test and score accumulators
+string current_name ;
+Student current_student() ;
+
+//Main
+int main() {
+
+  //Instance Variables
+  int test_score, test_count = 0 ;
+  string student_name ;
+
+  //Main Loop
+  cout << "How many tests would you like to enter?" , cin >> total_tests ;
+  student_scores = new Student[total_tests] ;
+
+  while (test_count < total_tests){
+    
+    *(student_scores+test_count) = Student() ;
+
+    //Prompt User Input
+    cout << "Enter Student " << test_count+1 << "'s Name: " , cin >> student_name ;
+    (student_scores+test_count)->setName(student_name) ;
+    cout << "Enter " << (student_scores+test_count)->getName() << "'s Score: " , cin >> test_score ;
+    
+    //Validate input
+    if (test_score < 0 || test_score > 100){
+      cout << "ERROR: Invalid Input (" << test_score << "). All inputs must be between 0 and 100." << endl ;
+      continue ;
+    } 
+
+    //Store input and increment accumulator
+    longest_name_length = (student_scores+test_count)->getName().length() > longest_name_length ? (student_scores+test_count)->getName().length() : longest_name_length  ;
+    (student_scores+test_count++)->setScore(test_score) ;
+    total_score += test_score ;
+  }
+
+  //Sort and Print
+  ascencionSort() ;
+  printReport() ;
+
+  //Reallocate memory
+  delete [] student_scores ;
+  student_scores = nullptr ;
+
+  //Exit
+  return 0 ;
+}//End main
+/**
+* Returns the average test score by dividing the total score of all tests by the total number of tests
+*/
+int getAverageTestScores(){ 
+  return total_score / total_tests ;
+}//end getAverageTestScores
+/**
+* Displays a formatted output of all values in the scores pointer
+*/
+void printReport(){
+  int student_name_padding = longest_name_length > 7 ? longest_name_length+2 : 8 ;
+  cout << setw(student_name_padding) << left << "Student  " << right << setw(8) << "Score\n" ;
+  cout << setfill('-') << setw(student_name_padding+8) << "" << setfill(' ') << endl ;
+  for (int i = total_tests-1 ; i > 0 ; i--){
+    cout << setw(student_name_padding) << left << (student_scores+i)->getName() << "|" << right << setw(7)<< (student_scores+i)->getScore() << endl ;
+  }
+  cout << setw(student_name_padding) << left << (student_scores)->getName() << "|" << right << setw(7) << (student_scores)->getScore() << endl ;
+  cout << setfill('-') << setw(student_name_padding+8) << "" << setfill(' ') << endl ;
+  cout << "Avg. Score: " << getAverageTestScores() ;
+
+}//End printReport
+/**
+* This funtion sorts our scores array pointer by iterating through the array and moving the lowest value in each iteration to the front of the array. 
+*/
+void ascencionSort(){
+  for (int i = 0 ; i < total_tests ; i++){//Controls the starting index to search from in array
+    for (int j = i+1 ; j < total_tests ; j++){//Used to find iterate from starting index to finish
+      //If our current starting index value is greater than the current value at index j
+      if ((student_scores+i)->getScore() > (student_scores+j)->getScore()){
+        Student tmp = *(student_scores+i) ; //Store the larger value
+        *(student_scores+i) = *(student_scores+j) ; //Insert the smaller value at the starting index
+        *(student_scores+j) = tmp ; //Insert the larger value at the original index of the smaller value
+      }
+    }
+  }
+}//End ascencionSort
