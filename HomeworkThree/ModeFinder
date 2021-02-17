@@ -1,0 +1,133 @@
+/**
+* ModeFinder.cpp - The purpose of this program is to find the mode of inputs
+* Author: Jordan Stafford
+* Module: 3
+* Project: Homework 3 Project 2
+* Problem Statement: This program finds the mode of a user-provided data set
+* Algorithim: 1) First, the user is prompted to enter 30 values representing the number of slices of pie eaten by a single person each. If the input is negative, an 
+*                error is thrown. All values are stored in order in the pie array. 
+*             2) Once all values are entered, the program sorts the pie array using an insertion sort. See comments in function for more documentation.
+*             3) After all values have been sorted, the results are displayed to the user using the printResults function. This function creates a tabular report 
+*                showcasing the total occurances of each value. The function then calls the findMode function to get the mode.
+*             4) The findMode function iterates through the sorted array and keeps track of the longest streak of values, stored that value for comparison against    
+*                later streaks. The mode is represented by the value that generates the longest streak of occurances. 
+*             5) Once the report is full generated, the program returns to main and exits. 
+*/
+
+#include <iostream>
+#include <iomanip>
+#include <string>
+
+using namespace std ;
+
+//Prototypes
+int findMode(int*,int) ;
+int *arrCopy() ;
+void sortArr() ;
+void printResults() ;
+void fillRandom() ;
+
+//Global Variables
+int* pie ;
+
+//Main
+int main(){
+  
+  //Instance Variables
+  int tmp_num_slices ;
+  //Allocate Memory
+  pie = new int[30] ;
+  //Input Prompt Loop
+  int i = 0 ;
+  while(i < 30){
+    cout << "Enter a number of slices of pie eaten for person " << i+1 << ": ", cin >> tmp_num_slices ;
+    if (tmp_num_slices < 0){//Error case
+      cout << "Error: Only Positive Integer Values Are Allowed.\n" ;
+      continue ;
+    }
+    *(pie+i++) = tmp_num_slices ;//Add value to array and increment i
+  }
+  //Sort
+  sortArr() ;
+  //Display
+  printResults() ;
+  //Deallocate Memory
+  delete [] pie ;
+  
+  return 0 ;
+}
+/**
+* This function sorts an array using insertion sort. 
+*/
+void sortArr(){
+  //Outer loop represents the current starting index of our search
+  for (int i = 0 ; i < 30 ; i++){
+    //Inner loop tracks the current value up to the final index
+    for (int j = i+1 ; j < 30 ; j++){
+      //If our current i index value is greater than j's index value
+      if (*(pie+i) > *(pie+j)){
+        //Store larger value
+        int tmp = *(pie+i) ;
+        //Swap out i and j values  
+        *(pie+i) = *(pie+j) ;
+        *(pie+j) = tmp ;
+      }
+    }
+  }
+}
+/**
+* This function displays the results in a tabular form using a sorted array. Each X represents an occurance of the value on the left. 
+*/
+void printResults(){
+  //Display Header
+  cout << "\n\n\n\n\n  Pie Slices Eaten Per Year" << endl ;
+  cout << setw(30) << setfill('-') << "" << endl ;
+  for (int i = 0 ; i < 30 ; i++){
+    //If the current value is not equal to the previous one, we start a new line 
+    if (*(pie+i) != *(pie+(i-1)) || i == 0){
+      cout << left << setw(6) << setfill(' ') << to_string(*(pie+i)) << "| " ;
+    }
+    //Determine if the next value is equal to the current one. If so, we continue on this line. Otherwise, the line will end. 
+    string line_ending = *(pie+i) == *(pie+(i+1)) ?  " "  : "\n" ;
+    //Display
+    cout << "X" << line_ending ;
+  }
+  //Display Footer
+  cout << setw(30) << setfill('-') << "" << endl ;
+  cout << "Mode: " << findMode(pie,30) ;
+}
+/**
+* This function finds the mode of a sorted array by iterating the array in a liner fashion, keeping track of how many value have currently matched in a row.
+* The value with the longest streak of matches is returned as the mode.
+*/
+int findMode(int *arr, int size){
+
+  int streak = 0, longestStreak = 0,mode = 0 ;
+
+  for (int i = 0 ; i < size ; i++){
+    //If two of the same value exist in a row (current and next value)
+    if (*(arr+i) == *(arr+(i+1))){
+      //Since there are two values in a row, we compare our current streak to the longest streak 
+      if (++streak > longestStreak){
+        longestStreak = streak ;
+        mode = *(arr+i) ;
+      }
+    } else { //If there are not two values in a row
+      streak = 0 ;
+    }  
+  }
+
+  return mode ;
+}
+/**
+* This function is used solely for testing as a replacement to manually entering 30 numbers each time you test the program 
+*/
+void fillRandom(){
+  srand((unsigned) time(0)) ;//Set seed
+  //Fill elements with 30 random numbers between 0 and 10
+  for (int i = 0 ; i < 30 ; i++){
+    int tmp = rand() % RAND_MAX + 1 ;//Generate a random number between 1 and RAND_MAX
+    tmp %= 11 ;//Reduce random number between 0 and 10
+    *(pie+i) = tmp ;
+  }
+}
