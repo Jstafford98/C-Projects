@@ -1,0 +1,85 @@
+#include <iostream>
+#include <iomanip>
+#include <vector>
+#include <random>
+#include <ctime>
+
+using namespace std ;
+
+//Constants
+const double BASIC_RATE = 28.50,
+             PREMIUM_RATE = 60.00 ;
+
+//Member Structure
+struct Member {
+
+  //Static Member Variables
+  static int total_visits, //Total visits from members 
+             active_members, //Total active members
+             last_id ; //Most recently assigned ID
+
+  //Instance Member Variables
+  int id, visits ; //This members id and total visits
+  string name ; //This member's name
+  char type ; //This members membership type (B= basic, P = premium)
+
+  //Constructor / Destructor
+  Member(string name = "Empty", char type = 'B'){
+    id = last_id++ ;
+    this -> name = name ;
+    this -> type = type ;
+    visits = 0 ;
+  }
+  ~Member(){
+    active_members-- ;
+  }
+} ;
+
+//Initialize Member Static Members 
+int Member :: total_visits = 0,
+    Member :: active_members = 0,
+    Member :: last_id = 100000 ;
+
+//Prototypes
+void visit(Member*) ;
+void remove(string) ;
+vector<Member*> fillVec() ;
+int get_random(int=0,int=100) ;
+
+int main() {
+  srand((unsigned) time(0)) ;
+  //Member List
+  vector<Member*> member_vec = fillVec() ;
+  //Remove charlie Sheen
+  //Visit n times
+  for (Member* &m : member_vec){
+    int vis = get_random(5,20) ;
+    for (int i = 5 ; i < vis ; i++){
+      visit(m) ;
+    }
+  }
+  //Display
+  for (Member* &m : member_vec){
+    cout << m->name << "     " << m->visits << endl ;
+  }
+
+}
+void visit(Member* m){
+  m ->visits++ ;
+  Member :: total_visits++ ;
+}
+vector<Member*> fillVec(){
+
+  string member_names[] = {"Oprah Winfrey","Fluffy Iglesias","Charlie Sheen","Bill Gates"} ;
+  char membership_types[] = {'P','P','B','B'} ;
+  vector<Member*> vec ;
+  for (int i = 0 ; i < 4 ; i++){
+    Member* ptr = new Member(member_names[i],membership_types[i]) ;
+    vec.push_back(move(ptr)) ;
+  }
+  return vec ;
+}
+int get_random(int min, int max){
+  int ran = rand() % (max - min + 1) + 5 ;
+  return ran + 4 ;
+}
