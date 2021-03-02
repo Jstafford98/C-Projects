@@ -1,0 +1,20 @@
+/**
+* CustomString.cpp - 
+* Author: Jordan Stafford
+* Module: 5
+* Lab 5 Project 2
+* Problem Statement: 
+* Algorithim: 1) 
+**/
+
+#include <iostream>
+#include "String.h"
+
+using namespace std; 
+
+int main() {
+  String str1("Hello World") ;
+  String str2 = str1 ;
+  str1.print() ;
+  str2.print() ;
+}
