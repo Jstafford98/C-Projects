@@ -1,0 +1,40 @@
+#ifndef STRING_H
+#define STRING_H
+
+#include <cstring>
+
+using namespace std ;
+
+class String{
+  private:
+    char *string ;
+    int size ;
+  public:
+    String(const char *s = " ") ;
+    ~String() ;
+    void print() ; //Print the string\
+    void change(const char *) ; //Reassgin the string
+} ;
+
+String :: String(const char *original){
+  size = strlen(original) ;
+  string = new char[size+1] ;
+  strcpy(string,original) ;
+}
+String :: ~String(){
+
+}
+
+void String::print(){
+  for (int i = 0 ; i <= size ; i++)
+    cout << *(string+i) ;
+}
+
+void String::change(const char *original){
+  delete [] string ;
+  size = strlen(original) ;
+  string = new char[size + 1] ;
+  strcpy(string,original) ;
+}
+
+#endif 
