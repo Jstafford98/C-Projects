@@ -1,0 +1,111 @@
+/**
+* DisplayBox.cpp - This program randomly places ten stone objects into an array
+* Author: Jordan Stafford
+* Module: 5
+* Homework 5 Project 1
+* Problem Statement: This program randomy places ten stone objecsts into an array by randomly selecting a spot and determining if it is available
+* Algorithim: 1) First, the struct representing a Stone is defined. 
+*             2) Next, in main, an array of our characters is created that will be used to instantiate our Stone objects
+*             3) Folloiwng this, we set the seed for the random number generator and declare an array of 10 unique pointers.
+*             4) Then, until all spots are filled, we use a for loop to iterate each index of the character array. Within this for loop, a while loop will run unti 
+*                a spot is successfully found for the object. 
+*                 a) First, a random index is generated between 0 and 9 and our number of attempts is incremented. 
+*                 b) If the index is not available, we continue to the next iteration.
+*                 c) Otherwise, we create a new stone object and insert it into the array of unique pointers and store the index in that object's slot value. 
+*                 d) Lastly, the cumulative attempts are incremented by the total attempts to successfully insert that Stone object. 
+*             5) Once all spots are filled, we print the report, sort, and then re print the report. See the sorting function for more documentaiton.
+**/
+
+//Import Statements
+#include <iostream>
+#include <iomanip>
+#include <ctime>
+
+using namespace std ;
+
+//Structures
+struct Stone{
+  string mLetter ;
+  int mNumAttempts, mSlot ;
+
+  Stone(string letter, int numAttempts){
+    mLetter = letter ;
+    mNumAttempts = numAttempts ;
+  }
+
+} ;
+
+//Prototypes
+void printReport(unique_ptr<Stone>[]) ;
+void sort(unique_ptr<Stone>[]) ;
+
+int cumulative_attempts = 0 ;
+
+int main() {
+
+  //Instance Variables
+  string chars[] = {"A","B","C","D","E","F","G","H","I","J"} ;
+  
+
+  //Set the seed of random number generator
+  srand(time(NULL)) ;
+
+  //Create an array of pointers to stone objects
+  unique_ptr<Stone> slots[10] ;
+
+  //Process Stones
+  for (int i = 0 ; i < 10 ; i++){
+
+    int attempts = 1 ;
+    string letter = chars[i] ;
+
+    while(true){
+
+      //Generate a random number between 0 and 9
+      int index = rand() % 10 ;
+
+      //Check if available 
+      if (slots[index]){
+        attempts++ ;
+      } else {//Fill spot
+        unique_ptr<Stone> new_stone(new Stone(letter,attempts)) ;
+        slots[index] = move(new_stone) ;
+        slots[index]->mSlot = index ;
+        break ;
+      } 
+    }
+    //Increment accumulator
+    cumulative_attempts += attempts ;
+  }
+  //Display report
+  printReport(slots) ;
+  //Sort
+  sort(slots) ;
+  //Display again
+  printReport(slots) ;
+}
+void printReport(unique_ptr<Stone> rocks[]){
+  //Display Header
+  cout << "~~~~~ The Display Box ~~~~~\n" 
+       << setw(8) << "  Rock  " << setw(8) << " Slot  " << setw(10) << " Attempts  \n"
+       << "---------------------------\n" ;
+  //Print data
+  for(int i = 0 ; i < 10 ; i++){
+    cout << setw(4) << right << rocks[i]->mLetter << "    " << setw(5) << rocks[i]->mSlot << "    " << setw(5) << rocks[i]->mNumAttempts << "\n" ;
+  }
+  //Print end of report
+  cout << "---------------------------\n"
+       << "Total Attempts: " <<  cumulative_attempts << endl ;
+}
+void sort(unique_ptr<Stone> rocks[]){
+  for (int i = 0 ; i < 10 ; i++){//Controls the starting index to search from in array
+    for (int j = i+1 ; j < 10 ; j++){//Used to find iterate from starting index to finish
+      //If our current starting index value is greater than the current value at index j
+      if (rocks[i]->mLetter > rocks[j]->mLetter){
+        unique_ptr<Stone> tmp = move(rocks[i]) ; //Store the larger value
+        rocks[i] = move(rocks[j]) ; //Insert the smaller value at the starting index
+        rocks[j] = move(tmp) ; //Insert the larger value at the original index of the smaller value
+      }
+    }
+  }
+}
