@@ -1,3 +1,20 @@
+/**
+* GymMemberships.cpp - This program tracks a gym's active members
+* Author: Jordan Stafford
+* Module: 5
+* Lab 5 Project 1
+* Problem Statement: This program allows gyms to track active member data, such a times visited and membership type
+* Algorithim: 1) First, a Member struct is defined that represents a gym member. See comments for documentation.
+*             2) Then, in the main function, we first set the seed for our random number generator.
+*             3) Next, we fill the member vector will the fill_vec() function. 
+*             4) With the vector filled, we remove "Charlie Sheen" from our active member list using the remove() function, 
+*                representing the removal of an inactive member
+*             5) Once removed, we use the get_random function within a nested for loop to iterate through our member vector 
+*                and simulate the member visitng the gym n times.
+*             6) Finally, the print_report function is used to print the final results. 
+*             Note: See functions for function documentation.
+**/
+
 #include <iostream>
 #include <iomanip>
 #include <vector>
@@ -28,7 +45,7 @@ struct Member {
     id = last_id++ ;
     this -> name = name ;
     this -> type = type ;
-    visits = 0 ;
+    this -> visits = 0 ;
   }
   ~Member(){
     active_members-- ;
@@ -42,44 +59,82 @@ int Member :: total_visits = 0,
 
 //Prototypes
 void visit(Member*) ;
-void remove(string) ;
-vector<Member*> fillVec() ;
+void remove(string,vector<Member*>*) ;
+void print_report(vector<Member*>*) ;
+void fill_vec(vector<Member*>*) ;
 int get_random(int=0,int=100) ;
 
 int main() {
-  srand((unsigned) time(0)) ;
-  //Member List
-  vector<Member*> member_vec = fillVec() ;
-  //Remove charlie Sheen
-  //Visit n times
-  for (Member* &m : member_vec){
-    int vis = get_random(5,20) ;
-    for (int i = 5 ; i < vis ; i++){
-      visit(m) ;
+    //Set seed for random generator
+    srand((unsigned) time(0)) ;
+    //Create member vector
+    vector<Member*> member_vec ; 
+    fill_vec(&member_vec) ;
+    //Remove Charlie Sheen (represents an inactive member)
+    remove("Charlie Sheen",&member_vec) ;
+    //Simulate each member visiting n times
+    for (Member* &m : member_vec){
+        int vis = get_random(5,20) ;
+        for (int i = 5 ; i < vis ; i++){
+            visit(m) ;
+        }
     }
-  }
-  //Display
-  for (Member* &m : member_vec){
-    cout << m->name << "     " << m->visits << endl ;
-  }
+    //Display
+    print_report(&member_vec) ;
 
 }
+
 void visit(Member* m){
-  m ->visits++ ;
-  Member :: total_visits++ ;
+    m ->visits++ ; //Increment member visits
+    Member :: total_visits++ ; //Increment total gym visits
 }
-vector<Member*> fillVec(){
 
-  string member_names[] = {"Oprah Winfrey","Fluffy Iglesias","Charlie Sheen","Bill Gates"} ;
-  char membership_types[] = {'P','P','B','B'} ;
-  vector<Member*> vec ;
-  for (int i = 0 ; i < 4 ; i++){
-    Member* ptr = new Member(member_names[i],membership_types[i]) ;
-    vec.push_back(move(ptr)) ;
-  }
-  return vec ;
+void fill_vec(vector<Member*>* vec){
+
+    string member_names[] = {"Oprah Winfrey","Fluffy Iglesias","Charlie Sheen","Bill Gates"} ;
+    char membership_types[] = {'P','P','B','B'} ;
+
+    for (int i = 0 ; i < 4 ; i++){
+        Member* ptr = new Member(member_names[i],membership_types[i]) ; //Create new member pointer
+        vec -> push_back(move(ptr)) ; //Store pointer in vector
+    }
 }
+
 int get_random(int min, int max){
-  int ran = rand() % (max - min + 1) + 5 ;
-  return ran + 4 ;
+    int ran = rand() % (max - min + 1) + 5 ;
+    return ran+4 <= 20 ? ran + 5 : ran ;//Returns random between min and max
+}
+
+void print_report(vector<Member*>* vec){
+    //Header
+    cout << "               ~~~~~ Members ~~~~~\n" ;
+    cout << setw(5) << right << " ID " << "   " << setw(17) << left << "      Name " << "   " << setw(5) << right <<  " Visits " << "  " <<" Monthly Rate " << endl ;
+    cout << "---------------------------------------------------" << endl ; 
+    //Data
+    for (Member* &m : *vec){
+        double m_rate =  m->type == 'P' ? PREMIUM_RATE : BASIC_RATE ;
+        cout << setw(5) << right << m->id << " | " << setw(15) << left << m->name << " | " << setw(6) << right << m->visits << "    |    $" << fixed << showpoint << setprecision(2) << m_rate  << endl ;
+    }
+    //End
+    cout << "---------------------------------------------------" << endl ;
+    cout << "Total Visits: " << Member ::total_visits << "\nTotal Members: " << vec->size() ;
+}
+
+void remove(string name_to_find,vector<Member*>* vec){
+
+  int index = 0 ;
+
+  for (Member* m : *vec){
+    if (m -> name == name_to_find){
+      swap(*vec->at(index),*vec ->back()) ;//Swap matching Member to back
+      delete vec->back() ; //Free Member pointer memory
+      vec->pop_back() ;//Remove nullptr from vector
+
+      Member :: last_id-- ;
+      vec -> back() ->id-- ;//Change final member ID down, only works when the 2nd to last Member is being removed
+
+      break ;
+    }
+    index++ ;
+  }
 }
