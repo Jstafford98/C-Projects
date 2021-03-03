@@ -1,10 +1,12 @@
 /**
-* CustomString.cpp - 
+* CustomString.cpp - This driver program demonstrates the functionalities of our custom String class
 * Author: Jordan Stafford
 * Module: 5
 * Lab 5 Project 2
-* Problem Statement: 
-* Algorithim: 1) 
+* Problem Statement: This program allows us to see the various capabilites of our String class
+* Algorithim: 1) First, we create two String objects using the Constructor for the first and Default Copy Constructor on the first to create the second. We then display the results.
+*             2) Then, we change the value in String two using the change function and display the results.
+*             3) Finally, we edit the first string using the change function and display the results one last time.
 **/
 
 #include <iostream>
@@ -12,9 +14,28 @@
 
 using namespace std; 
 
+void print_str(String,String) ;
+
 int main() {
-  String str1("Hello World") ;
-  String str2 = str1 ;
-  str1.print() ;
-  str2.print() ;
+
+    cout << "   ~~~Creating Strings using the Constructor and the Default Copy Constructor~~~\n" ;
+    String str1("MiraCota College") ;
+    String str2 = str1 ;
+    print_str(str1,str2) ;
+
+    cout <<"   ~~~After changing string 2 using change()~~~\n" ;
+    str2.change("Cal State San Marcos") ;
+    print_str(str1,str2) ;
+
+    cout <<"   ~~~After changing string 1 using change()~~~\n" ;
+    str1.change("UCSD") ;
+    print_str(str1,str2) ;
+
+
+}
+void print_str(String one,String two){
+    one.print() ;
+    cout << endl ;
+    two.print() ;
+    cout << endl ;
 }
