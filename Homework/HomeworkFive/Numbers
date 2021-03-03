@@ -1,0 +1,88 @@
+#ifndef NUMBERS_H
+#define NUMBERS_H 
+
+#include <string> 
+
+using namespace std ;
+
+//Non-Numbers Class Prototypes
+int get_index(int*,int) ;
+
+//Numbers Class
+class Numbers{
+
+    private:
+        int number ; //Integer value to be represented by this object
+
+        /**
+        * These arrays contain various string values needed to represent all numbers from 0 to 9999
+        */
+        string lessThan20[20] =   {" zero"," one"," two"," three"," four",
+                                 " five"," six"," seven"," eight"," nine",
+                                 " ten", " eleven"," twelve"," thirteen"," fourteen",
+                                 " fifteen"," sixteen"," seventeen"," eighteen"," nineteen"} ;
+        string tens[10] = {"",""," twenty"," thirty"," fourty"," fifty"," sixty"," seventy"," eighty"," ninety"} ;
+        string hundred = " hundred",
+               thousand = " thousand" ;
+
+    public:
+        Numbers(int = 0) ; //Constructor
+        ~Numbers() ; //Destructor
+        void print() ; //Displays number as a word
+        
+} ;
+
+/** 
+ * Constructor - creates object in memory
+ * @param num - number to be represented by object 
+ */
+Numbers :: Numbers(int num){
+    number = num ;
+}
+/** 
+ * Destructor - deallocates object memory
+ */
+Numbers :: ~Numbers(){}
+
+/**
+ * Print - prints the number variable as a word
+ */
+void Numbers :: print(){
+    
+    string output = "" ; //String to build to create our output
+
+    /**
+     * These if statements allow us to determine which string value to get from their respective array of string by calling the get_index function
+     */
+    if (number > 1000){
+        output += (lessThan20[get_index(&number,1000)] + thousand) ;
+    }
+    if (number > 100){
+        output += (lessThan20[get_index(&number,100)] + hundred) ;
+    }
+    if (number > 20){
+        output += (tens[get_index(&number,10)]) ;
+    }
+    if ((number > 0) & (number < 20)){
+        output += lessThan20[number] ;
+    }
+    if ((number == 0) & (output == "")){
+        output += lessThan20[number] ;
+    }
+
+    cout << output << endl ;
+
+}
+
+/** Calculates the index needed in the print() function of the Numbers class
+ * @param n - The number from a Numbers object that we are currently using to calculate
+ * @param divisor - The divisor is based on the size of n
+ */
+int get_index(int *n,int divisor){
+    //The number we return is how many thousands, hundreds, or tens that go into n
+    int out = *n / divisor ;
+    //Use the Modulo operator to remove the thousands, hundred, or tens value from the number so we can print the next part of the word
+    *n %= divisor ;
+    return out ;
+}
+#endif 
