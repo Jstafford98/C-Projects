@@ -1,0 +1,25 @@
+/**
+* NumberDriver.cpp - This program prints any number from 0 to 9999 as a word
+* Author: Jordan Stafford
+* Module: 5
+* Homework 5
+* Problem Statement: This program utilizes the Numbers class to display various numbers in their word form
+* Algorithim: 1) First, we declare an init_list containing all of the required values for our assignment
+*             2) Then, a for loop iteratess through the init_list, creating new Numbers objects and calling the print function
+**/
+
+#include <iostream>
+#include "Numbers.h"
+
+using namespace std ;
+
+int main(){
+
+    int init_list[9] = {5,10,11,18,60,295,970,1413,9999} ;
+
+    for (int i = 0 ; i < 9 ; i++){
+        Numbers tmp(init_list[i]) ;
+        tmp.print() ;
+    }
+    
+}
