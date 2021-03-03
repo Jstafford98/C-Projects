@@ -1,3 +1,7 @@
+/**
+ * This class creates a String in memory by making an array of pointers in memory
+ */
+
 #ifndef STRING_H
 #define STRING_H
 
@@ -7,34 +11,49 @@ using namespace std ;
 
 class String{
   private:
-    char *string ;
-    int size ;
+    char *string ; //Pointer to the start of the string of characters in memory stored in an array
+    int size ; //Size of word
   public:
     String(const char *s = " ") ;
+    String(const String &) ;
     ~String() ;
-    void print() ; //Print the string\
+    void print() ; //Print the string
     void change(const char *) ; //Reassgin the string
 } ;
-
+/**
+*   Constructor
+*/
 String :: String(const char *original){
-  size = strlen(original) ;
+  size = strlen(original) ; 
   string = new char[size+1] ;
-  strcpy(string,original) ;
+  strcpy(string,original) ; //Copy of provided word to the array in memory
 }
-String :: ~String(){
-
+/**
+*   Copy Constructor
+*/
+String :: String(const String &original){
+    size = original.size ;
+    string = new char[size+1] ;
+    strcpy(string,original.string) ; //Copy of provided word to the array in memory
 }
-
+/**
+*   Destructor
+*/
+String :: ~String(){}
+/**
+*   Print String by iterating through memory
+*/
 void String::print(){
   for (int i = 0 ; i <= size ; i++)
     cout << *(string+i) ;
 }
-
+/**
+*   Change the word in memory to a new word
+*/
 void String::change(const char *original){
-  delete [] string ;
-  size = strlen(original) ;
-  string = new char[size + 1] ;
-  strcpy(string,original) ;
+  delete [] string ; //Clear original memory
+  size = strlen(original) ; //Get new size
+  string = new char[size + 1] ; //Create space in memory
+  strcpy(string,original) ; //Copy new word into memory
 }
-
 #endif 
