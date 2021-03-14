@@ -1,0 +1,35 @@
+#include <iostream>
+#include "EString.h"
+
+using namespace std ;
+
+int main(){
+    EString estring1 = "Hello MiraCosta!", estring2 ;
+
+    //Test Assignment Operator
+    estring2 = estring1 ;
+    cout << "First string: " << estring1 << endl ;
+    cout << "Second string: " << estring2 << endl << endl ;
+
+    EString first = "thE quiCK foX rAN", second = "Hello, world!" ;
+    
+    cout << "Original String: "  ;
+    first.print() ;
+    cout <<"Using prefix operator: " ;
+    first.operator++().print() ;
+    cout <<"After using prefix operator: " ;
+    first.print() ;
+
+    cout << "Original String: "  ;
+    second.print() ;
+    cout <<"Using postfix operator: " ;
+    second.operator++(1).print() ;
+    cout <<"After using postfix operator: " ;
+    second.print() ;
+
+    EString sum = first + second + estring1 + estring2 ;
+    sum.print() ;
+
+    for (int i = 0 ; i < sizeof(second) ; i++)
+        cout << second.operator[](i)  << " " ;
+}
