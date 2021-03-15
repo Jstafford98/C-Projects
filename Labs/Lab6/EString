@@ -22,6 +22,7 @@ class EString{
 
     void print() ; //Print the string
     void change(const char *) ; //Reassgin the string
+    int length() ; //Size accessor
 
     EString &operator=(const EString &) ; //Assignment operator overload
     EString &operator++() ; //Pre-fix Increment Operator Overload
@@ -67,6 +68,12 @@ void EString::change(const char *original){
   size = strlen(original) ; //Get new size
   string = new char[size + 1] ; //Create space in memory
   strcpy(string,original) ; //Copy new word into memory
+}
+/**
+*   Size accessor
+*/
+int EString::length(){
+  return size ;
 }
 /**
 *   Overload the assignment operator
@@ -124,4 +131,5 @@ char &EString::operator[](int index){
   }
   return *(string + index)  ;
 }
+
 #endif 
