@@ -1,35 +1,78 @@
+/**
+* EnhancedStringDriver.cpp - This program demonstrates our Enhanced String's capabilities
+* Author: Jordan Stafford
+* Module: 6
+* Lab 6 Project 1
+* Problem Statement: This program showcases various CPP concepts, such as operator overloading
+* Algorithim: 1) First, the EString class' assignment operator is demonstrated. From this point on, all results will be displayed as the program uses them.
+*             2) Then, the program showcases the prefix operator on the "first" EString followed by the postfix operator on the "second" EString.
+*             3) Next, the Concatenation operator (+) is used on all EString objects in this driver. 
+*             4) Afterwards, the index operator is showcased both by itself and when used in conjunction with the prefix operator.
+*             5) Once complete, the program exits. 
+**/
+
 #include <iostream>
 #include "EString.h"
 
 using namespace std ;
 
 int main(){
-    EString estring1 = "Hello MiraCosta!", estring2 ;
 
-    //Test Assignment Operator
+    EString estring1 = "Hello MiraCosta!", estring2,first = "thE quiCK foX rAN", second = "Hello, world!" ; 
     estring2 = estring1 ;
+
+    //Show the strings we are starting with after using the assignment operator
+    cout << "============================================================\n" 
+         << "                   STARTING STRINGS                         \n"
+         << "============================================================" << endl ;
     cout << "First string: " << estring1 << endl ;
     cout << "Second string: " << estring2 << endl << endl ;
-
-    EString first = "thE quiCK foX rAN", second = "Hello, world!" ;
     
+    //Demonstrate the prefix operator
+    cout << "============================================================\n" 
+         << "                   PREFIX OPERATOR                          \n"
+         << "============================================================" << endl ;
     cout << "Original String: "  ;
     first.print() ;
     cout <<"Using prefix operator: " ;
     first.operator++().print() ;
     cout <<"After using prefix operator: " ;
     first.print() ;
+    cout << endl  ;
 
+    //Demonstrate the postfix operator
+    cout << "============================================================\n" 
+         << "                   POSTFIX OPERATOR                         \n"
+         << "============================================================" << endl ;
     cout << "Original String: "  ;
     second.print() ;
     cout <<"Using postfix operator: " ;
     second.operator++(1).print() ;
     cout <<"After using postfix operator: " ;
     second.print() ;
+    cout << endl  ;
 
-    EString sum = first + second + estring1 + estring2 ;
-    sum.print() ;
+    //Demonstrate concatenation
+    EString concatExample = first + second + estring1 + estring2 ; //Concatenate all strings
+    cout << "============================================================\n" 
+         << "                CONCATENATION OPERATOR                      \n"
+         << "============================================================" << endl ;
+    concatExample.print() ;
+    cout << endl  ;
 
-    for (int i = 0 ; i < sizeof(second) ; i++)
+    //Demonstrate the index operator
+    cout << "============================================================\n" 
+         << "                   INDEX OPERATOR                         \n"
+         << "============================================================" << endl ;
+    for (int i = 0 ; i < second.length() ; i++)
         cout << second.operator[](i)  << " " ;
+    cout << endl << endl ;
+
+    //Demonstrate the prefix and index operators combined
+    cout << "============================================================\n" 
+         << "                 PREFIX AND INDEX OPERATOR                  \n"
+         << "============================================================" << endl ;
+    for (int i = 0 ; i < second.length() ; i++)
+        cout << ++second[i]  << " " ;
+    cout << endl  ;
 }
