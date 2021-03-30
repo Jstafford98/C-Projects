@@ -1,0 +1,85 @@
+#include <iostream>
+#include <algorithm>
+
+using namespace std ;
+
+//Provides the ability to throw custom exceptions for unique cases
+class CustomException : public exception {
+    
+    private:
+        string msg ;
+    public:
+        CustomException(string msg){
+            this->msg = msg ;
+        }
+        string getExcept(){
+            return msg ;
+        }
+} ;
+
+//Constants 48-57
+const int DIGIT_LOWER_BOUND = 48, DIGIT_UPPER_BOUND = 57,
+          CHAR_LOWER_CASE_LOWER_BOUND = 65, CHAR_UPPER_CASE_LOWER_BOUND = 97,
+          CHAR_LOWER_CASE_UPPER_BOUND = 90, CHAR_UPPER_CASE_UPPER_BOUND = 122 ;
+
+//Prototypes
+void encrypt(char&) ;
+bool checkSentinel(string&) ;
+
+int main(){
+
+    string input  ;
+
+    //Runs until quit is entered
+    while (true){
+        //Take input
+        cout << "Enter a string to encrypt: " ;
+        cin >> input ;
+        //Check if any form of "quit" was entered irrespective of case
+        string test = input ;
+        try {
+            if (checkSentinel(test))
+                break ;
+        } catch (CustomException e){
+            cout << e.getExcept() << endl ;
+            continue ;
+        }
+        //Encrypt each letter of string input
+        for_each(input.begin(),input.end(),
+        [](char &c){encrypt(c) ;}) ;
+        //Display results
+        cout << input << endl ;
+    }
+}
+/**
+ *  This function encrypts an alphanumeric character by performing a ceaser cipher with a key of 1
+ */
+void encrypt(char &character){
+    //Increment character ASCII value
+    int ascii_value = character ;
+    ascii_value++ ;
+    //Check if value is out of range and adjust
+    if (ascii_value > DIGIT_UPPER_BOUND && ascii_value < DIGIT_UPPER_BOUND+2){
+        ascii_value = DIGIT_LOWER_BOUND + (ascii_value % DIGIT_UPPER_BOUND) - 1 ;
+    } else if (ascii_value > CHAR_LOWER_CASE_UPPER_BOUND && ascii_value < CHAR_UPPER_CASE_LOWER_BOUND){
+        ascii_value = CHAR_LOWER_CASE_LOWER_BOUND + (ascii_value % CHAR_LOWER_CASE_UPPER_BOUND) - 1 ;
+    } else if (ascii_value > CHAR_UPPER_CASE_UPPER_BOUND){
+        ascii_value = CHAR_UPPER_CASE_LOWER_BOUND + (ascii_value % CHAR_UPPER_CASE_UPPER_BOUND) - 1 ;
+    }
+    //Set character to the new value
+    character = ascii_value ;
+}
+/**
+ *  This function first ensures all values in an input string are alphanumeric and then checks for the sentinel 
+ */
+bool checkSentinel(string &sentinel){
+    //Set each character to lower case and check for non-alpha numeric characters
+    for_each(sentinel.begin(),sentinel.end(),
+            [](char &c){  if (!isalnum(c))
+                                throw CustomException("ERROR: String contains a non-alphanumeric value") ;
+                            c = tolower(c) ;
+                        }) ;
+    //Return boolean comparison
+    return sentinel == "quit" ;
+
+}
