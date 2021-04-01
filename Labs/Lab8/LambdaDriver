@@ -1,23 +1,23 @@
+/* LambdaDriver.cpp - This program encrypts a message
+ * Author:     Jordan Stafford
+ * Module:     8
+ * Project:    Lab, Part 2
+ * Problem statement: Encrypts string messages
+ *
+ * Algorithm:
+ *   1. First, the user is prompted to enter a string to encrypt 
+ *   2. Next, we use the checkSentinel function to check that the use did not enter "quit" irrespective of case.
+ *   3. If quit is entered, the program exits. 
+ *   4. Next, we use a Lambda function to iterate all characters of the string and encrypt each character using the encrypt function. See the functions comments for more documentation.
+ *   5. Finally, the encrypted result is displayed to the user and the program loops back to step 1.
+ */
+
 #include <iostream>
 #include <algorithm>
 
 using namespace std ;
 
-//Provides the ability to throw custom exceptions for unique cases
-class CustomException : public exception {
-    
-    private:
-        string msg ;
-    public:
-        CustomException(string msg){
-            this->msg = msg ;
-        }
-        string getExcept(){
-            return msg ;
-        }
-} ;
-
-//Constants 48-57
+//ASCII range constants
 const int DIGIT_LOWER_BOUND = 48, DIGIT_UPPER_BOUND = 57,
           CHAR_LOWER_CASE_LOWER_BOUND = 65, CHAR_UPPER_CASE_LOWER_BOUND = 97,
           CHAR_LOWER_CASE_UPPER_BOUND = 90, CHAR_UPPER_CASE_UPPER_BOUND = 122 ;
@@ -34,31 +34,37 @@ int main(){
     while (true){
         //Take input
         cout << "Enter a string to encrypt: " ;
-        cin >> input ;
+        getline(cin,input) ;
         //Check if any form of "quit" was entered irrespective of case
         string test = input ;
-        try {
-            if (checkSentinel(test))
-                break ;
-        } catch (CustomException e){
-            cout << e.getExcept() << endl ;
-            continue ;
-        }
+
+        if (checkSentinel(test))
+            break ;
+
         //Encrypt each letter of string input
         for_each(input.begin(),input.end(),
         [](char &c){encrypt(c) ;}) ;
         //Display results
         cout << input << endl ;
     }
+    
 }
 /**
  *  This function encrypts an alphanumeric character by performing a ceaser cipher with a key of 1
  */
 void encrypt(char &character){
+
+    //Ignore character if it is not alphanumeric
+    if (!isalnum(character))
+        return ;
+
     //Increment character ASCII value
     int ascii_value = character ;
     ascii_value++ ;
-    //Check if value is out of range and adjust
+    /**
+     * Check if value is out of range and adjust
+     * We ensure bounds checking by using the % operator to get the difference above the upperlimit we are and simply set our character to the lowerbound + the result -1
+     */
     if (ascii_value > DIGIT_UPPER_BOUND && ascii_value < DIGIT_UPPER_BOUND+2){
         ascii_value = DIGIT_LOWER_BOUND + (ascii_value % DIGIT_UPPER_BOUND) - 1 ;
     } else if (ascii_value > CHAR_LOWER_CASE_UPPER_BOUND && ascii_value < CHAR_UPPER_CASE_LOWER_BOUND){
@@ -67,7 +73,7 @@ void encrypt(char &character){
         ascii_value = CHAR_UPPER_CASE_LOWER_BOUND + (ascii_value % CHAR_UPPER_CASE_UPPER_BOUND) - 1 ;
     }
     //Set character to the new value
-    character = ascii_value ;
+    character = char(ascii_value) ;
 }
 /**
  *  This function first ensures all values in an input string are alphanumeric and then checks for the sentinel 
@@ -75,10 +81,9 @@ void encrypt(char &character){
 bool checkSentinel(string &sentinel){
     //Set each character to lower case and check for non-alpha numeric characters
     for_each(sentinel.begin(),sentinel.end(),
-            [](char &c){  if (!isalnum(c))
-                                throw CustomException("ERROR: String contains a non-alphanumeric value") ;
-                            c = tolower(c) ;
-                        }) ;
+            [](char &c){  
+                c = tolower(c) ;
+    }) ;
     //Return boolean comparison
     return sentinel == "quit" ;
 
